@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>gst_demos</name>
+  <version>1.2.3</version>
+  <description>TODO: Package description</description>
+  <maintainer email="robo2020@gmail.com">user</maintainer>
+  <license>TODO: License declaration</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
+
+  <build_depend>rosidl_default_generators</build_depend>
+  <exec_depend>gstreamer1.0-tools</exec_depend>
+  <exec_depend>gstreamer1.0-plugins-base</exec_depend>
+  <exec_depend>gstreamer1.0-plugins-good</exec_depend>
+  <exec_depend>gstreamer1.0-plugins-bad</exec_depend>
+  <exec_depend> gstreamer1.0-plugins-ugly</exec_depend>
+  <exec_depend>gstreamer1.0-libav</exec_depend>
+  <!-- <exec_depend111>python3-gst-1.0</exec_depend> -->
+  <exec_depend>python3-gi</exec_depend>
+  <exec_depend>gir1.2-gstreamer-1.0</exec_depend>
+  <!-- <exec_depend111>python3-gi-cairo</exec_depend> -->
+  <member_of_group>rosidl_interface_packages</member_of_group>
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

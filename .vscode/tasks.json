@@ -1,0 +1,15 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "colcon build all",
+            "type": "shell",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "command": "colcon build --symlink-install --merge-install",
+            "problemMatcher": []
+        },
+    ]
+    
+}

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <script>
+        // Function to fetch items and populate the combo box
+        async function populateComboBox() {
+            try {
+                const response = await fetch("http://127.0.0.1:{{ port }}/items");
+                if (!response.ok) {
+                    throw new Error("Failed to fetch items");
+                }
+                const items = await response.json();
+                const comboBox = document.getElementById("comboBox");
+
+                // Populate combo box with items
+                items.forEach(item => {
+                    const option = document.createElement("option");
+                    option.value = item;
+                    option.textContent = item;
+                    comboBox.appendChild(option);
+                });
+            } catch (error) {
+                console.error("Error populating combo box:", error);
+            }
+        }
+
+        // Function to handle item selection
+        async function kill_request() {
+            const comboBox = document.getElementById("comboBox");
+            const selectedItem = comboBox.value;
+
+            try {
+                const response = await fetch("http://127.0.0.1:{{ port }}/reset?name="+selectedItem, {
+                    method: "GET",
+                });
+
+                if (!response.ok){
+                    alert("Kill fail");
+                    return;
+                }
+                const items = await response.json();
+                // const result = await response.json();
+                // document.getElementById("result").textContent = result.message;
+            } catch (error) {
+                console.error("Error executing command:", error);
+            }
+        }
+
+        // Populate the combo box on page load
+        document.addEventListener("DOMContentLoaded", populateComboBox);
+    </script>
+</head>
+
+<body>
+    <h1>Kill nodes</h1>
+    <label for="comboBox">Select Node to kill:</label>
+    <select id="comboBox" >
+        <option value="" disabled selected>Choose an option</option>
+    </select>
+    <button onclick="kill_request()">Send Kill</button>
+    <p id="result" style="margin-top: 20px;"></p>
+</body>
+
+</html>

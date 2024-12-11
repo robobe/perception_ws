@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Modal Data Return Example</title>
+  <style>
+    /* Style for the modal background */
+    .modal {
+      display: none;
+      /* Hidden by default */
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    /* Modal content */
+    .modal-content {
+      background-color: white;
+      margin: 15% auto;
+      padding: 20px;
+      border-radius: 5px;
+      width: 50%;
+    }
+
+    /* Close button */
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .close:hover,
+    .close:focus {
+      color: black;
+    }
+
+    /* Style for the input field */
+    .textbox {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+    }
+
+    /* Button to trigger modal */
+    #openModalBtn {
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    /* Display area for returning data */
+    #result {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Button to open modal -->
+  <button id="openModalBtn">Open Modal</button>
+
+  <!-- The Modal -->
+  <div id="myModal" class="modal">
+    <div class="modal-content">
+      <span class="close" id="closeBtn">&times;</span>
+      <h2>Enter Some Data</h2>
+      <!-- Textbox inside modal -->
+      <table>
+        <tr>
+          <td>Network</td>
+          <td><input type="text" id="eth0_ip" class="textbox" placeholder="Enter text" onblur="changeLastOcta('eth0_ip', 'eth0_gw_ip')"/></td>
+        </tr>
+        <tr>
+          <td>GW 0</td>
+          <td><input type="text" id="eth0_gw_ip" class="textbox" placeholder="Enter text"></td>
+        </tr>
+        <tr>
+          <td>Network</td>
+          <td><input type="text" id="eth1_ip" class="textbox" placeholder="Enter text"></td>
+        </tr>
+        <tr>
+          <td>GW</td>
+          <td><input type="text" id="eth1_gw_ip" class="textbox" placeholder="Enter text"></td>
+        </tr>
+      </table>
+
+      <button id="submitBtn">Submit</button>
+    </div>
+  </div>
+
+  <!-- Area to display the returned data -->
+  <div id="result"></div>
+
+  <script>
+    // Get references to elements
+    var openModalBtn = document.getElementById("openModalBtn");
+    var modal = document.getElementById("myModal");
+    var closeBtn = document.getElementById("closeBtn");
+    var submitBtn = document.getElementById("submitBtn");
+    var eth0_ip = document.getElementById("eth0_ip");
+    var result = document.getElementById("result");
+
+    // Open the modal when the button is clicked
+    openModalBtn.onclick = function () {
+      modal.style.display = "block";
+    };
+
+    // Close the modal when the close button (x) is clicked
+    closeBtn.onclick = function () {
+      modal.style.display = "none";
+    };
+
+    // Close the modal if user clicks anywhere outside of it
+    // window.onclick = function(event) {
+    //   if (event.target == modal) {
+    //     modal.style.display = "none";
+    //   }
+    // };
+
+    function isValidIPAddress(ip) {
+      // Regular expression to validate IPv4 address
+      var regex = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
+      return regex.test(ip);
+    }
+
+    // Handle submit button click to return data from modal
+    submitBtn.onclick = function () {
+      var inputValue = eth0_ip.value; // Get the value from the modal textbox
+      if (!isValidIPAddress(inputValue)) {
+        return;
+      }
+      if (inputValue) {
+        result.textContent = "Returned data: " + inputValue; // Display the returned data on the main page
+        modal.style.display = "none"; // Close the modal
+      } else {
+        result.textContent = "Please enter some text."; // Prompt if the textbox is empty
+      }
+    };
+
+    function changeLastOcta(txt_src, txt_dst) {
+      var src = document.getElementById(txt_src);
+      var dst = document.getElementById(txt_dst);
+
+      let octets = src.value.split(".");
+      octets[3] = 1;
+      dst.value = octets.join(".");
+    }
+  </script>
+
+</body>
+
+</html>

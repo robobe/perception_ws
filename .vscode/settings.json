@@ -1,0 +1,16 @@
+{
+    "python.autoComplete.extraPaths": [
+      "/opt/ros/humble/lib/python3.10/site-packages",
+      "/opt/ros/humble/local/lib/python3.10/dist-packages",
+      "install/vis_flow/local/lib/python3.10/dist-packages",
+      "install/local/lib/python3.10/dist-packages",
+      "/usr/local/lib/python3.10/dist-packages/cv2"
+    ],
+    "python.analysis.extraPaths": [
+      "/opt/ros/humble/lib/python3.10/site-packages",
+      "/opt/ros/humble/local/lib/python3.10/dist-packages",
+      "install/vis_flow/local/lib/python3.10/dist-packages",
+      "install/local/lib/python3.10/dist-packages",
+      "/usr/local/lib/python3.10/dist-packages/cv2"
+    ]
+  }

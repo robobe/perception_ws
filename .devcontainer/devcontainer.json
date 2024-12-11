@@ -1,0 +1,63 @@
+{
+    "name": "perception",
+    "workspaceFolder": "/workspaces/perception_ws",
+    "build": {
+        "context": "..",
+        "dockerfile": "Dockerfile"
+    },
+    "remoteUser": "user",
+    "runArgs": [
+        "--name=perception",
+        "--hostname=perception",
+        "--privileged",
+        "--network=host",
+        // "--gpus=all",
+        "--device=/dev/dri:/dev/dri",
+        "--device=/dev/dri/renderD128:/dev/dri/renderD128"
+    ],
+    "containerEnv": {
+        "DISPLAY": "${localEnv:DISPLAY}",
+        "QT_X11_NO_MITSHM": "1",
+        "PS1": "🐳  \\[\\033[1;36m\\]\\h \\[\\033[1;34m\\]\\W\\[\\033[0;35m\\] \\[\\033[1;36m\\]# \\[\\033[0m\\]"
+    },
+    "mounts": [
+        "source=/tmp/.X11-unix,target=/tmp/.X11-unix,type=bind,consistency=cached",
+        "type=bind,source=/dev/bus/usb,target=/dev/bus/usb",
+        "type=bind,source=/dev/input,target=/dev/input"
+    ],
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-vscode.cpptools",
+                "twxs.cmake",
+                "albert.tabout",
+                "redhat.vscode-xml",
+                "ms-python.python",
+                "redhat.vscode-yaml",
+                "actboy168.tasks",
+                "streetsidesoftware.code-spell-checker",
+                "ms-python.black-formatter",
+                "ms-python.isort",
+                "rioj7.command-variable",
+                "mhutchie.git-graph",
+                "dlech.chmod",
+                "mkloubert.vscode-deploy-reloaded"
+            ],
+            "settings": {
+                "remote.autoForwardPorts": false,
+                "[xml]": {
+                    "editor.defaultFormatter": "redhat.vscode-xml"
+                },
+                "files.exclude": {
+                    "**/.git": true,
+                    "**/.svn": true,
+                    "**/.hg": true,
+                    "**/CVS": true,
+                    "**/.DS_Store": true,
+                    "**/Thumbs.db": true,
+                    "**/__pycache__": true
+                }
+            }
+        }
+    }
+}

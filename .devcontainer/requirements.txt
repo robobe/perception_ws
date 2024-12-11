@@ -1,0 +1,8 @@
+opencv-python==4.10.0.84
+fastapi
+uvicorn
+numpy
+pyyaml
+Pillow
+matplotlib
+jinja2
