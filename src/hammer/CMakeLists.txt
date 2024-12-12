@@ -8,10 +8,19 @@ endif()
 # find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(ament_cmake_python REQUIRED)
+find_package(rosidl_default_generators REQUIRED)
 
+set(SRV_FILES
+  srv/GetList.srv
+  srv/KillRequest.srv
+)
+
+rosidl_generate_interfaces(${PROJECT_NAME}
+  ${SRV_FILES}
+)
 
 set(NODES
-  hammer/hammer.py
+  hammer/hammer_node.py
 )
 
 install(PROGRAMS
@@ -24,4 +33,11 @@ install(DIRECTORY
     hammer/templates
   DESTINATION lib/${PROJECT_NAME}
 )
+
+
+ament_export_dependencies(rosidl_default_runtime)
+# ament_python_install_package(${PROJECT_NAME})
 ament_package()
+
+set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+include(packing)

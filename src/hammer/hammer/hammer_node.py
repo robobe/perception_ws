@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+
 """
 http://127.0.0.1:8000/docs
 http://127.0.0.1:8000/redoc
@@ -7,6 +8,7 @@ import rclpy
 import rclpy.logging
 import rclpy.parameter
 from rclpy.node import Node
+from hammer.srv import GetList, KillRequest
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, HTMLResponse
@@ -30,25 +32,46 @@ class KILL_METHOD(IntEnum):
     PKILL = 2
 
 TOPIC_KILL = "kill_node"
-
+SRV_GET_NODE_NAMES = "node_list"
 
 class HammerNode(Node):
     def __init__(self):
         node_name="hammer"
         super().__init__(node_name)
+        self.__init_parameters()
+        self.__init_service()
+        self.get_logger().info("init hammer node")
+
+    def __init_parameters(self):
         self.param_pid_file_location = self.declare_parameter(PARAM_NAME_PID_FILE_LOCATION, value=PID_FILE_LOCATION)
-        self.extra_nodes_to_kill = self.declare_parameter(PARAM_EXTRA_NODES_TO_KILL, value=["mavros"])
-        self.get_logger().info("Hello ROS2")
+        self.param_extra_nodes_to_kill = self.declare_parameter(PARAM_EXTRA_NODES_TO_KILL, value=["mavros"])
 
-    # def __init_service(self):
-    #     self.kill_service = self.create_service(SetString, TOPIC_KILL, self.__handle_kill_request)
+    def __init_service(self):
+        self.kill_service = self.create_service(KillRequest, TOPIC_KILL, self.__handle_kill_request)
 
-    #     self.node_list = self.create_service(
-    #         GetList,
-    #         self.get_full_name(SRV_GET_NODE_NAMES, ns_only=False),
-    #         self.__get_node_names_handler
-    #         )
+        self.node_list = self.create_service(
+            GetList,
+            SRV_GET_NODE_NAMES,
+            self.__get_node_names_handler
+            )
         
+    def __handle_kill_request(self, request: KillRequest.Request, response: KillRequest.Response):
+        try:
+            self.kill(request.name)
+            response.success = True
+        except Exception as e:
+            response.success = False
+            response.msg = str(e)
+        finally:
+            return response
+    
+
+    def __get_node_names_handler(self, request: GetList.Request, response: GetList.Response):
+        response.data = self.get_nodes_name_to_kill()
+        response.success = True
+
+        return response
+
     def __pkill(self, process_name):
         try:
             cmd = f"kill -9 `ps -C {process_name} -o pid=`"
@@ -119,7 +142,7 @@ class HammerNode(Node):
             
         
         
-        nodes.extend(self.extra_nodes_to_kill.value)
+        nodes.extend(self.param_extra_nodes_to_kill.value)
         return nodes
 
 
@@ -135,7 +158,6 @@ app.add_middleware(
     allow_methods=["*"],  # Allows all HTTP methods
     allow_headers=["*"],  # Allows all headers
 )
-print(template_path.as_posix())
 templates_env = Environment(loader=FileSystemLoader(template_path.as_posix()))
 node = None
 
@@ -144,12 +166,14 @@ node = None
 # async def root():
 #     return FileResponse(f_path)
 
+global_port = 8000
+
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request):
     template = templates_env.get_template("index.html") 
     return HTMLResponse(content=template.render(
         title="XXX" , 
-        port=8000 ))
+        port=global_port ))
     
 
 @app.get("/reset")
@@ -179,6 +203,8 @@ def main(args=None):
     parser.add_argument("--web", action='store_true', help="enabled/disabled local fastapi server (default: disabled)")
     parser.add_argument("--port", type=int, required=False, default=8000, help="set local server port")
     parsed_args, _ = parser.parse_known_args() 
+    global global_port
+    global_port = parsed_args.port
     
     rclpy.init(args=args)
     if parsed_args.web:

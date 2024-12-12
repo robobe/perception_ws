@@ -1,5 +1,6 @@
 build/
-install/
+/install/
 log/
 logs/
 data/
+*.pyc
