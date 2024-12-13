@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ROS 2 Parameters</title>
+    <script>
+        let ws;
+
+        async function fetchParameters() {
+            const response = await fetch('/parameters');
+            const data = await response.json();
+            renderParameters(data.parameters);
+        }
+
+        function renderParameters(parameters) {
+            const table = document.getElementById('parameterTable');
+            table.innerHTML = ''; // Clear existing rows
+
+            parameters.forEach(param => {
+                const row = document.createElement('tr');
+
+                const nameCell = document.createElement('td');
+                nameCell.textContent = param.name;
+
+                const valueCell = document.createElement('td');
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.value = param.value;
+                input.dataset.name = param.name;
+                input.dataset.type = param.type;
+                valueCell.appendChild(input);
+
+                const typeCell = document.createElement('td');
+                typeCell.textContent = param.type;
+
+                row.appendChild(nameCell);
+                row.appendChild(valueCell);
+                row.appendChild(typeCell);
+
+                table.appendChild(row);
+            });
+        }
+
+        async function saveParameters() {
+            const inputs = document.querySelectorAll('#parameterTable input');
+            for (let input of inputs) {
+                const paramName = input.dataset.name;
+                const paramValue = input.value;
+                const paramType = input.dataset.type;
+
+                await fetch('/parameters/set', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name: paramName, value: paramValue, type: paramType })
+                });
+            }
+        }
+
+        function connectWebSocket() {
+            ws = new WebSocket('ws://localhost:8000/ws/parameters');
+            ws.onmessage = event => {
+                const data = JSON.parse(event.data);
+                renderParameters(data.parameters);
+            };
+        }
+
+        window.onload = function () {
+            fetchParameters();
+            connectWebSocket();
+        };
+    </script>
+</head>
+<body>
+    <h1>ROS 2 Parameters</h1>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Value</th>
+                <th>Type</th>
+            </tr>
+        </thead>
+        <tbody id="parameterTable">
+        </tbody>
+    </table>
+    <button onclick="saveParameters()">Save Changes</button>
+</body>
+</html>
